@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/stylesheet.css">
+    <script>
+      const colsFromBreakpoint = {
+        'lg': 120,
+        'md': 80,
+        'sm': 40
+      };
+
+      const format = (breakpoint) => {
+        document.querySelectorAll('[data-width]').forEach(el => {
+          if (el.dataset.width == colsFromBreakpoint[breakpoint]) { 
+            el.hidden = false
+          } else { 
+            el.hidden = true;
+          }
+        });
+      };
+
+      const detectBreakepointChange = (callback) => {
+        const widthToBreakpoint = (width) => {
+          if      (width < 600)  { return 'sm'; } 
+          else if (width < 1000) { return 'md'; } 
+          else                   { return 'lg'; };
+        };
+        let currentBreakpoint = widthToBreakpoint(window.innerWidth);
+
+        window.addEventListener("resize", () => {
+          let breakpoint = widthToBreakpoint(window.innerWidth);
+
+          if (breakpoint != currentBreakpoint) {
+            currentBreakpoint = breakpoint;
+            callback(breakpoint);
+          };
+        });
+      };
+      detectBreakepointChange(format);
+    </script>
+  </head>
+  <body>
+    <%= yield %>
+    <script>
+      document.querySelectorAll('[data-width]').forEach(el => {
+        if (el.dataset.width != 120) { el.hidden = true; };
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/stylesheet.css">
+    <script type="module">
+      import { DefaultRubyVM } from "https://cdn.jsdelivr.net/npm/@ruby/wasm-wasi@2.7.1/dist/browser/+esm";
+      const response = await fetch("../ruby.wasm");
+      const module = await WebAssembly.compileStreaming(response);
+      const { vm } = await DefaultRubyVM(module);
+
+      const initialSource = document.querySelector("textarea[hidden]")
+      const code = document.querySelector("code")
+
+      const format = (breakpoint) => {
+        code.innerHTML = 
+          vm.eval(`
+            require "js"
+            require "syntax_tree"
+            require "rouge"
+
+            max_columns_width = 
+              case "${breakpoint}"
+              when 'sm' then 40
+              when 'md' then 80
+              else 120
+              end
+
+            Rouge::Formatters::HTML.new.format(
+              Rouge::Lexers::Ruby.new.lex(
+                SyntaxTree.format(<<~SRC, max_columns_width)
+                  ${initialSource.value}
+                SRC
+              )
+            )
+          `).toString();
+      };
+
+      const detectBreakepointChange = (callback) => {
+        const widthToBreakpoint = (width) => {
+          if      (width < 600)  { return 'sm'; } 
+          else if (width < 1000) { return 'md'; } 
+          else                   { return 'lg'; };
+        };
+        let currentBreakpoint = widthToBreakpoint(window.innerWidth);
+
+        window.addEventListener("resize", () => {
+          let breakpoint = widthToBreakpoint(window.innerWidth);
+
+          if (breakpoint != currentBreakpoint) {
+            currentBreakpoint = breakpoint;
+            callback(breakpoint);
+          };
+        });
+      };
+      detectBreakepointChange(format);
+    </script>
+  </head>
+  <body>
+    <%= yield %>
+  </body>
+</html>

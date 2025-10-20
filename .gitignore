@@ -1,0 +1,6 @@
+output/
+tmp/
+crash.log
+rubies/
+build/
+ruby.wasm

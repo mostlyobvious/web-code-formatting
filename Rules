@@ -1,0 +1,102 @@
+#!/usr/bin/env ruby
+
+BREAKPOINTS = { sm: 40, md: 80, lg: 120 }
+
+# --- wasm ---
+
+wasm_renderer =
+  Class.new(Redcarpet::Render::HTML) do
+    include Rouge::Plugins::Redcarpet
+    prepend HiddenTextareaCode
+  end
+
+compile "/**/wasm.md" do
+  filter :erb
+  filter :redcarpet,
+         options: {
+           fenced_code_blocks: true
+         },
+         renderer: wasm_renderer
+  layout "/wasm.*"
+  write item.identifier.without_ext + "/index.html"
+end
+
+passthrough "/**/*.wasm"
+
+# --- hidden dom --
+
+hidden_dom_renderer =
+  Class.new(Redcarpet::Render::HTML) do
+    include Rouge::Plugins::Redcarpet
+    prepend StreeBlockCode
+  end
+
+compile "/**/hidden_dom.md" do
+  filter :erb
+  filter :redcarpet,
+         options: {
+           fenced_code_blocks: true
+         },
+         renderer: hidden_dom_renderer,
+         renderer_options: {
+           widths: BREAKPOINTS.values
+         }
+  layout "/hidden_dom.*"
+  write item.identifier.without_ext + "/index.html"
+end
+
+# --- turbo ---
+
+turbo_renderer =
+  Class.new(Redcarpet::Render::HTML) do
+    include Rouge::Plugins::Redcarpet
+    prepend StreeBlockCode
+    prepend TurboBlockCode
+  end
+
+compile "/**/turbo.md" do
+  filter :erb
+  filter :redcarpet,
+         options: {
+           fenced_code_blocks: true
+         },
+         renderer: turbo_renderer,
+         renderer_options: {
+           widths: BREAKPOINTS.values[-1..]
+         }
+  layout "/turbo.*"
+  write item.identifier.without_ext + "/index.html"
+end
+
+BREAKPOINTS.each do |name, columns|
+  compile "/**/turbo.md", rep: name do
+    filter :erb
+    filter :redcarpet,
+           options: {
+             fenced_code_blocks: true
+           },
+           renderer: turbo_renderer,
+           renderer_options: {
+             widths: [columns]
+           }
+    layout "/turbo.*"
+    write item.identifier.without_ext + "/#{name}/index.html"
+  end
+end
+
+# --- generic ---
+
+compile "/**/*.md" do
+  filter :erb
+  filter :redcarpet
+  layout "/default.*"
+
+  if item.identifier =~ "**/index.*"
+    write item.identifier.without_ext + ".html"
+  else
+    write item.identifier.without_ext + "/index.html"
+  end
+end
+
+passthrough "/**/*.css"
+layout "/**/*", :erb
