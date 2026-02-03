@@ -17,6 +17,7 @@ compile "/**/wasm.md" do
            fenced_code_blocks: true
          },
          renderer: wasm_renderer
+  filter :relativize_paths, type: :html5
   layout "/wasm.*"
   write item.identifier.without_ext + "/index.html"
 end
@@ -41,6 +42,7 @@ compile "/**/hidden_dom.md" do
          renderer_options: {
            widths: BREAKPOINTS.values
          }
+  filter :relativize_paths, type: :html5
   layout "/hidden_dom.*"
   write item.identifier.without_ext + "/index.html"
 end
@@ -63,6 +65,7 @@ compile "/**/turbo.md" do
          renderer_options: {
            width: BREAKPOINTS.values.last
          }
+  filter :relativize_paths, type: :html5
   layout "/turbo.*"
   write item.identifier.without_ext + "/index.html"
 end
@@ -78,6 +81,7 @@ BREAKPOINTS.each do |name, columns|
            renderer_options: {
              width: columns
            }
+    filter :relativize_paths, type: :html5
     layout "/turbo.*"
     write item.identifier.without_ext + "/#{name}/index.html"
   end
@@ -88,6 +92,7 @@ end
 compile "/**/*.md" do
   filter :erb
   filter :redcarpet
+  filter :relativize_paths, type: :html5
   layout "/default.*"
 
   if item.identifier =~ "**/index.*"
