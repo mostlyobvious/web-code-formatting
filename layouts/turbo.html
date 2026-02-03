@@ -2,13 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/stylesheet.css">
+    <link rel="stylesheet" href="../stylesheet.css">
     <script type="module" src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@latest/dist/turbo.es2017-esm.min.js"></script>
     <script>
       const format = (breakpoint) =>
         document
           .querySelectorAll("turbo-frame")
-          .forEach((el) => { el.src = `/turbo/${breakpoint}/` });
+          .forEach((el) => { el.src = breakpoint });
 
       const detectBreakepointChange = (callback) => {
         const widthToBreakpoint = (width) => {
