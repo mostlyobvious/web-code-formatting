@@ -25,6 +25,7 @@ jobs:
         with:
           ruby-version: '3.4'
           bundler-cache: true
+      - run: bundle install --gemfile Gemfile.wasm
       - run: bundle exec rake
       - run: bundle exec nanoc compile
       - name: Upload artifact
