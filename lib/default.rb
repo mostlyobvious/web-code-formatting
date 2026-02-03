@@ -17,7 +17,7 @@ module TurboBlockCode
     digest = Digest::SHA1.hexdigest(code)
     <<~EOS
       <turbo-frame id="#{digest}">
-        #{super}
+        #{super(SyntaxTree.format(code, @options.fetch(:width)), language)}
       </turbo-frame>
     EOS
   end

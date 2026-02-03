@@ -50,7 +50,6 @@ end
 turbo_renderer =
   Class.new(Redcarpet::Render::HTML) do
     include Rouge::Plugins::Redcarpet
-    prepend StreeBlockCode
     prepend TurboBlockCode
   end
 
@@ -62,7 +61,7 @@ compile "/**/turbo.md" do
          },
          renderer: turbo_renderer,
          renderer_options: {
-           widths: BREAKPOINTS.values[-1..]
+           width: BREAKPOINTS.values.last
          }
   layout "/turbo.*"
   write item.identifier.without_ext + "/index.html"
@@ -77,7 +76,7 @@ BREAKPOINTS.each do |name, columns|
            },
            renderer: turbo_renderer,
            renderer_options: {
-             widths: [columns]
+             width: columns
            }
     layout "/turbo.*"
     write item.identifier.without_ext + "/#{name}/index.html"
