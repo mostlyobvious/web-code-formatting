@@ -29,6 +29,8 @@ jobs:
       - run: bundle exec nanoc compile
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
+        with:
+          path: output/
 
   deploy:
     environment:
