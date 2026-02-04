@@ -1,3 +1,5 @@
+Read about it on https://mostlyobvio.us/2026/02/responsive-code-formatting/.
+
 See https://mostlyobvious.github.io/web-code-formatting/ for an interactive version. Try resizing browser window to see how code formatting changes.
 
 To run this demo on localhost:
